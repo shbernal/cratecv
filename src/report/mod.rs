@@ -7,6 +7,7 @@
 mod human;
 mod rules;
 
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::diagnostic::Diagnostic;
@@ -17,7 +18,7 @@ pub use human::{message, summary};
 pub use rules::LooseKind;
 
 /// What a check does when it finds something.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub enum Severity {
     /// Reported, and the run fails.
@@ -149,10 +150,11 @@ impl Report {
 /// Judge a laid-out page against the settings.
 pub fn report(measured: &Measured, locator: &Locator, check: &Check) -> Report {
     let findings = rules::findings(measured, locator, &check.loose_lines);
+    // Folded from an explicit zero rather than summed: the identity of `sum`
+    // is negative zero, which would serialize as `-0.0` on a clean resume.
     let wasted_lines = findings
         .iter()
-        .map(|found| (1.0 - found.fill).max(0.0))
-        .sum();
+        .fold(0.0, |total, found| total + (1.0 - found.fill).max(0.0));
     let fits = measured.pages <= check.max_pages;
     let fatal_lines = check.loose_lines.severity == Severity::Error && !findings.is_empty();
 

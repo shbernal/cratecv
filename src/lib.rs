@@ -14,6 +14,24 @@ pub use error::Error;
 pub use report::{Check, Report};
 pub use schema::{Resume, load};
 
+/// A JSON Schema for the resume format, generated from the types the parser
+/// uses, so it cannot describe something the parser would reject.
+pub fn json_schema() -> serde_json::Value {
+    let mut schema = schemars::schema_for!(Resume);
+    schema.insert(
+        "title".to_owned(),
+        serde_json::Value::String("cratecv resume".to_owned()),
+    );
+    schema.insert(
+        "description".to_owned(),
+        serde_json::Value::String(
+            "A resume compiled by cratecv. Unknown keys are rejected, and every string              must carry text."
+                .to_owned(),
+        ),
+    );
+    schema.to_value()
+}
+
 /// What `cratecv init` writes: a resume small enough to read at a glance and
 /// complete enough to compile.
 pub const STARTER_RESUME: &str = include_str!("../templates/starter.yaml");

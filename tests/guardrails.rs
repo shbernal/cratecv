@@ -27,7 +27,11 @@ fn a_resume_with_nothing_wrong_says_so() {
     assert!(report.overflow_mm.is_none());
     assert!(report.schema_errors.is_empty());
     assert!(report.loose_lines.is_empty(), "{:?}", report.loose_lines);
-    assert_eq!(report.wasted_lines, 0.0);
+    assert_eq!(
+        serde_json::to_value(&report).unwrap()["wastedLines"],
+        serde_json::json!(0.0),
+        "nothing wasted reads as zero, not as negative zero"
+    );
 }
 
 #[test]

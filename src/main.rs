@@ -71,6 +71,8 @@ enum Command {
         #[arg(long)]
         max_pages: Option<usize>,
     },
+    /// Print a JSON Schema for the resume format.
+    Schema,
     /// Write a starter resume here, and a config file if there is none.
     Init {
         /// Where the starter resume goes. The current directory by default.
@@ -133,6 +135,7 @@ fn run(cli: Cli) -> Result<ExitCode, Error> {
                 ..Flags::default()
             },
         ),
+        Command::Schema => schema(),
         Command::Init { directory } => init(directory.as_deref()),
     }
 }
@@ -270,6 +273,15 @@ fn watch(input: &Path, flags: Flags) -> Result<ExitCode, Error> {
             report_error(&why);
         }
     }
+    Ok(code::OK)
+}
+
+fn schema() -> Result<ExitCode, Error> {
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&cratecv::json_schema())
+            .map_err(|why| Error::Export(why.to_string()))?
+    );
     Ok(code::OK)
 }
 

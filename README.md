@@ -30,11 +30,29 @@ cargo install --path .
 ## Use
 
 ```bash
+cratecv init                        # a starter resume, and a config if there is none
 cratecv build cv.yaml -o cv.pdf     # compile, refusing to overflow a page
 cratecv check cv.yaml --json        # layout report, no file written
 cratecv preview cv.yaml -o cv.png   # what the page looks like
 cratecv watch cv.yaml               # recompile while editing
+cratecv schema                      # JSON Schema for the resume format
 ```
+
+## Docs
+
+- [The resume format](docs/resume-schema.md)
+- [Guardrails](docs/guardrails.md) — the four kinds of half-empty line, and what
+  `ok` does and does not mean
+- [The command line](docs/cli.md) — commands and exit codes
+- [Configuration](docs/configuration.md) — the four layers
+- [Architecture](docs/architecture.md), and the
+  [decision records](docs/technical/adr/)
+
+## For assistants
+
+`skills/write-resume/SKILL.md` teaches the loop: edit the YAML, run
+`cratecv check --json`, fix what the report names by path, repeat. Copy it into
+your project.
 
 ## License
 

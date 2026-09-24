@@ -10,6 +10,7 @@ mod resolve;
 
 use std::path::PathBuf;
 
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::diagnostic::Diagnostic;
@@ -19,7 +20,7 @@ pub use date::{Stamp, parse_date};
 pub use resolve::{Flags, PdfMeta, Resolved, resolve};
 
 /// `~/.config/cratecv/config.yaml`: every resume on this machine.
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Config {
     pub theme: Option<String>,
@@ -35,7 +36,7 @@ pub struct Config {
 /// this machine and this invocation, so they are not here. The head is repeated
 /// rather than shared with `#[serde(flatten)]`, which silently defeats
 /// `deny_unknown_fields`.
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct ResumeSettings {
     pub theme: Option<String>,
@@ -45,7 +46,7 @@ pub struct ResumeSettings {
 
 /// Title and author are absent by design: they come from the resume's `name`,
 /// and nobody should have to state their own name twice.
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Pdf {
     pub creator: Option<String>,
@@ -56,14 +57,14 @@ pub struct Pdf {
     pub keywords: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct CheckSettings {
     pub max_pages: Option<usize>,
     pub loose_lines: Option<LooseLineSettings>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct LooseLineSettings {
     /// `error`, `warn` or `silent`. Not `off`: that is a boolean in YAML.
@@ -74,13 +75,13 @@ pub struct LooseLineSettings {
     pub widow_words: Option<usize>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Output {
     pub dir: Option<PathBuf>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Preview {
     pub dpi: Option<f64>,

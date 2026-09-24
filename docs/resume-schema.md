@@ -22,7 +22,9 @@ sections:
             text: Moved a 40-minute monorepo build onto a shared cache.
 ```
 
-`examples/resume.yaml` exercises every field below.
+`examples/resume.yaml` exercises every field below, and `cratecv schema` prints
+a JSON Schema generated from the parser's own types, so an editor or an
+assistant can validate a resume before the tool runs.
 
 ## Root
 
