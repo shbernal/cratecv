@@ -1,0 +1,81 @@
+# An invented resume. Nobody here is real; it exists to exercise every field.
+name: Mira Halvorsen
+headline:
+  text: Platform engineer who makes build systems fast enough that nobody routes around them
+  source: headlines/platform.yaml
+
+contact:
+  phone: "+1 555 0142"
+  email: mira@halvorsen.example
+  github: github.com/mhalvorsen
+  linkedin: linkedin.com/in/mhalvorsen
+
+sections:
+  - title: Experience
+    entries:
+      - dates: 2022 — present
+        organization: Tessellate
+        organizationSubtitle: Developer infrastructure
+        location: Oslo, Norway
+        role: Staff Engineer, Build Platform
+        details:
+          - label: Remote execution
+            text: Moved a 40-minute monorepo build onto a shared cache and remote workers, cutting the median CI run to six minutes and the fleet's compute bill by a third.
+            source:
+              - work/tessellate/remote-exec.yaml
+              - metrics/ci-2024.yaml
+          - text: Rewrote the dependency graph resolver so a one-line change rebuilds eleven targets instead of the whole tree, which ended the habit of pushing straight to main to skip CI.
+            source: work/tessellate/resolver.yaml
+          - text: Wrote the migration guide and ran the office hours that moved sixty engineers off the old build files over two quarters, with no frozen branch and no big-bang cutover.
+
+      - dates: 2019 — 2022
+        organization: Kelp Systems
+        location: Remote
+        role: Senior Software Engineer
+        details:
+          - text: Owned the release pipeline for a storage product shipping to air-gapped customers, taking the release from a two-day manual checklist to a signed, reproducible artifact built on tag.
+          - label: Reliability
+            text: Cut pager volume by half by giving the ingestion service backpressure it had been faking with retries, then wrote the runbook that let the on-call rotation shrink to four people.
+
+      - dates: 2017 — 2019
+        organization: Arboret Analytics
+        role: Software Engineer
+        details:
+          - text: Built the column store's query planner alongside two colleagues, and kept its regression suite honest by making every plan change print a diff a reviewer could read.
+
+  - title: Projects
+    entries:
+      - dates: 2023 — present
+        organization: ledgerfmt
+        role: Author and maintainer
+        details:
+          - text: A formatter for plain-text accounting files, about nine hundred downloads a month, with a test suite built from the idempotence property rather than from golden files.
+
+  - title: Education
+    entries:
+      - dates: 2013 — 2017
+        organization: Northvale Institute of Technology
+        location: Bergen, Norway
+        details:
+          - text: BSc Computer Science, with a thesis on incremental compilation that became the first version of the resolver work above.
+
+  - title: Skills
+    layout: rows
+    skills:
+      - label: Languages
+        value: Rust, Go, Python, TypeScript, Bash
+        source: skills/languages.yaml
+      - label: Infrastructure
+        value: Bazel, Nix, Kubernetes, Terraform, GitHub Actions
+      - label: Data
+        value: PostgreSQL, ClickHouse, Kafka, Parquet
+
+  - title: Languages
+    layout: badges
+    skills:
+      - label: Norwegian
+        value: Native
+      - label: English
+        value: Fluent
+      - label: German
+        value: Working proficiency

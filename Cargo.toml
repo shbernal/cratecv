@@ -19,6 +19,8 @@ name = "cratecv"
 path = "src/main.rs"
 
 [dependencies]
+marked-yaml = { version = "0.8.0", features = ["serde", "serde-path"] }
+serde = { version = "1.0.229", features = ["derive"] }
 
 [profile.release]
 lto = true
