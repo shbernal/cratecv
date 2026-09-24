@@ -66,8 +66,16 @@ fn the_template_only_sees_validated_data() {
 
 #[test]
 fn the_example_compiles_and_exports() {
-    let document = cratecv::compile(&example()).expect("the example should compile");
+    let mut document = cratecv::compile(&example()).expect("the example should compile");
     assert!(!document.pages().is_empty());
-    let pdf = cratecv::export_pdf(&document).expect("the document should export");
+
+    let settings = cratecv::config::resolve(
+        &cratecv::config::Config::default(),
+        None,
+        &cratecv::config::Flags::default(),
+    )
+    .expect("the defaults resolve");
+    cratecv::describe(&mut document, &example(), &settings.pdf, None);
+    let pdf = cratecv::export_pdf(&document, &settings.pdf).expect("the document should export");
     assert!(pdf.starts_with(b"%PDF-"));
 }

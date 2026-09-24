@@ -21,6 +21,7 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.6.7", features = ["derive"] }
 comemo = "0.5"
+lopdf = { version = "0.45", default-features = false }
 marked-yaml = { version = "0.8.0", features = ["serde", "serde-path"] }
 notify = "8.2.0"
 serde = { version = "1.0.229", features = ["derive"] }

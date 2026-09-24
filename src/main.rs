@@ -6,7 +6,8 @@ use std::process::ExitCode;
 use std::time::Duration;
 
 use clap::{Parser, Subcommand};
-use cratecv::{Check, Error, Report, Resume};
+use cratecv::config::{Flags, Resolved};
+use cratecv::{Error, Report, Resume};
 
 /// Exit codes are part of the contract: callers branch on them. They track
 /// severity, not which check spoke.
@@ -59,8 +60,8 @@ enum Command {
         #[arg(short, long)]
         output: Option<PathBuf>,
         /// Resolution of the PNG, high enough to read by default.
-        #[arg(long, default_value_t = 150.0)]
-        dpi: f64,
+        #[arg(long)]
+        dpi: Option<f64>,
     },
     /// Recompile while the resume is being edited.
     Watch {
@@ -69,6 +70,11 @@ enum Command {
         output: Option<PathBuf>,
         #[arg(long)]
         max_pages: Option<usize>,
+    },
+    /// Write a starter resume here, and a config file if there is none.
+    Init {
+        /// Where the starter resume goes. The current directory by default.
+        directory: Option<PathBuf>,
     },
 }
 
@@ -86,40 +92,70 @@ fn run(cli: Cli) -> Result<ExitCode, Error> {
             output,
             allow_overflow,
             max_pages,
-        } => build(&input, output.as_deref(), allow_overflow, max_pages),
+        } => build(
+            &input,
+            Flags {
+                max_pages,
+                output,
+                ..Flags::default()
+            },
+            allow_overflow,
+        ),
         Command::Check {
             input,
             json,
             max_pages,
-        } => check(&input, json, max_pages),
-        Command::Preview { input, output, dpi } => preview(&input, output.as_deref(), dpi),
+        } => check(
+            &input,
+            json,
+            Flags {
+                max_pages,
+                ..Flags::default()
+            },
+        ),
+        Command::Preview { input, output, dpi } => preview(
+            &input,
+            Flags {
+                dpi,
+                output,
+                ..Flags::default()
+            },
+        ),
         Command::Watch {
             input,
             output,
             max_pages,
-        } => watch(&input, output.as_deref(), max_pages),
+        } => watch(
+            &input,
+            Flags {
+                max_pages,
+                output,
+                ..Flags::default()
+            },
+        ),
+        Command::Init { directory } => init(directory.as_deref()),
     }
 }
 
-fn settings(max_pages: Option<usize>) -> Check {
-    Check {
-        max_pages: max_pages.unwrap_or(1),
-        ..Check::default()
-    }
-}
-
-fn build(
-    input: &Path,
-    output: Option<&Path>,
-    allow_overflow: bool,
-    max_pages: Option<usize>,
-) -> Result<ExitCode, Error> {
+/// Read the resume and fold the four layers over it.
+fn prepare(input: &Path, flags: Flags) -> Result<(String, Resume, Resolved), Error> {
     let yaml = std::fs::read_to_string(input)?;
-    let resume = load(&yaml)?;
-    let document = cratecv::compile(&resume)?;
+    let resume = cratecv::load(&yaml).map_err(Error::Resume)?;
+    let config = cratecv::config::load().map_err(Error::Resume)?;
+    let settings = cratecv::config::resolve(&config, resume.cratecv.as_ref(), &flags)
+        .map_err(Error::Resume)?;
+    Ok((yaml, resume, settings))
+}
+
+fn build(input: &Path, flags: Flags, allow_overflow: bool) -> Result<ExitCode, Error> {
+    let (yaml, resume, settings) = prepare(input, flags)?;
+    let mut document = cratecv::compile_theme(&resume, &settings.theme)?;
     let measured = cratecv::layout::measure(&document)?;
-    let check = settings(max_pages);
-    let report = cratecv::report::report(&measured, &cratecv::schema::Locator::new(&yaml), &check);
+    let report = cratecv::report::report(
+        &measured,
+        &cratecv::schema::Locator::new(&yaml),
+        &settings.check,
+    );
 
     eprint!("{}", cratecv::report::summary(&report, &shown(input)));
 
@@ -130,15 +166,31 @@ fn build(
         return Ok(ExitCode::from(code::FAILED));
     }
 
-    let path = destination(output, &resume, "pdf");
-    write(&path, &cratecv::export_pdf(&document)?)?;
+    cratecv::describe(
+        &mut document,
+        &resume,
+        &settings.pdf,
+        settings.pdf.date.resolve(input),
+    );
+    let path = destination(&settings, &resume, "pdf");
+    write(&path, &cratecv::export_pdf(&document, &settings.pdf)?)?;
     eprintln!("Wrote {}", path.display());
     Ok(exit_for(&report))
 }
 
-fn check(input: &Path, json: bool, max_pages: Option<usize>) -> Result<ExitCode, Error> {
+fn check(input: &Path, json: bool, flags: Flags) -> Result<ExitCode, Error> {
+    let file = shown(input);
     let yaml = std::fs::read_to_string(input)?;
-    let report = cratecv::check(&yaml, &settings(max_pages))?;
+    let config = cratecv::config::load().map_err(Error::Resume)?;
+    let settings = match cratecv::load(&yaml) {
+        Ok(resume) => cratecv::config::resolve(&config, resume.cratecv.as_ref(), &flags),
+        // The resume does not load, so its own layer has nothing to say. The
+        // report still has to state what it would have measured against.
+        Err(_) => cratecv::config::resolve(&config, None, &flags),
+    }
+    .map_err(Error::Resume)?;
+
+    let report = cratecv::check(&yaml, &settings.check)?;
 
     if json {
         // Nothing but the report reaches stdout, so this stays pipeable.
@@ -148,7 +200,6 @@ fn check(input: &Path, json: bool, max_pages: Option<usize>) -> Result<ExitCode,
         );
     }
 
-    let file = shown(input);
     if !report.schema_errors.is_empty() {
         if !json {
             eprintln!("{file} does not load:");
@@ -164,17 +215,19 @@ fn check(input: &Path, json: bool, max_pages: Option<usize>) -> Result<ExitCode,
     Ok(exit_for(&report))
 }
 
-fn preview(input: &Path, output: Option<&Path>, dpi: f64) -> Result<ExitCode, Error> {
-    let yaml = std::fs::read_to_string(input)?;
-    let resume = load(&yaml)?;
-    let document = cratecv::compile(&resume)?;
+fn preview(input: &Path, flags: Flags) -> Result<ExitCode, Error> {
+    let (_, resume, settings) = prepare(input, flags)?;
+    let document = cratecv::compile_theme(&resume, &settings.theme)?;
 
-    let svg = output.is_some_and(|path| path.extension().is_some_and(|ext| ext == "svg"));
-    let path = destination(output, &resume, if svg { "svg" } else { "png" });
+    let svg = settings
+        .output
+        .as_deref()
+        .is_some_and(|path| path.extension().is_some_and(|ext| ext == "svg"));
+    let path = destination(&settings, &resume, if svg { "svg" } else { "png" });
     let bytes = if svg {
         cratecv::export_svg(&document).into_bytes()
     } else {
-        cratecv::export_png(&document, dpi)?
+        cratecv::export_png(&document, settings.dpi)?
     };
     write(&path, &bytes)?;
     eprintln!("Wrote {}", path.display());
@@ -185,7 +238,7 @@ fn preview(input: &Path, output: Option<&Path>, dpi: f64) -> Result<ExitCode, Er
 /// quiet for this long.
 const DEBOUNCE: Duration = Duration::from_millis(200);
 
-fn watch(input: &Path, output: Option<&Path>, max_pages: Option<usize>) -> Result<ExitCode, Error> {
+fn watch(input: &Path, flags: Flags) -> Result<ExitCode, Error> {
     use notify::{RecursiveMode, Watcher};
 
     let input = input.canonicalize()?;
@@ -202,7 +255,7 @@ fn watch(input: &Path, output: Option<&Path>, max_pages: Option<usize>) -> Resul
         .map_err(watch_failed)?;
 
     eprintln!("Watching {}. Ctrl-C to stop.", input.display());
-    let _ = build(&input, output, true, max_pages);
+    let _ = build(&input, flags.clone(), true);
 
     while let Ok(event) = rx.recv() {
         let touched = event
@@ -213,9 +266,29 @@ fn watch(input: &Path, output: Option<&Path>, max_pages: Option<usize>) -> Resul
         }
         while rx.recv_timeout(DEBOUNCE).is_ok() {}
         eprintln!("---");
-        if let Err(why) = build(&input, output, true, max_pages) {
+        if let Err(why) = build(&input, flags.clone(), true) {
             report_error(&why);
         }
+    }
+    Ok(code::OK)
+}
+
+fn init(directory: Option<&Path>) -> Result<ExitCode, Error> {
+    let directory = directory.unwrap_or(Path::new("."));
+    let resume = directory.join("resume.yaml");
+    if resume.exists() {
+        eprintln!("{} is already there, left alone.", resume.display());
+    } else {
+        write(&resume, cratecv::STARTER_RESUME.as_bytes())?;
+        eprintln!("Wrote {}", resume.display());
+    }
+
+    let config = cratecv::config::path();
+    if config.exists() {
+        eprintln!("{} is already there, left alone.", config.display());
+    } else {
+        write(&config, cratecv::config::STARTER.as_bytes())?;
+        eprintln!("Wrote {}", config.display());
     }
     Ok(code::OK)
 }
@@ -224,16 +297,12 @@ fn watch_failed(why: notify::Error) -> Error {
     Error::Io(std::io::Error::other(why))
 }
 
-fn load(yaml: &str) -> Result<Resume, Error> {
-    cratecv::load(yaml).map_err(Error::Resume)
-}
-
 /// `-o` takes either a file or a directory. A directory receives the output
 /// under a name derived from the resume, which is what a separate name flag
 /// would otherwise be for.
-fn destination(output: Option<&Path>, resume: &Resume, extension: &str) -> PathBuf {
+fn destination(settings: &Resolved, resume: &Resume, extension: &str) -> PathBuf {
     let named = |dir: &Path| dir.join(format!("{}.{extension}", slug(&resume.name)));
-    match output {
+    match settings.output.as_deref() {
         None => named(Path::new(".")),
         Some(path) if path.is_dir() => named(path),
         Some(path) if path.to_string_lossy().ends_with(std::path::MAIN_SEPARATOR) => named(path),

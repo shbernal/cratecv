@@ -16,25 +16,12 @@ use crate::diagnostic::Diagnostic;
 
 pub use locate::Locator;
 pub use path::Path;
-pub use types::{
-    Bullet, Contact, Entry, Headline, Layout, Resume, Section, Settings, Skill, Source, THEMES,
-};
+pub use types::{Bullet, Contact, Entry, Headline, Layout, Resume, Section, Skill, Source, THEMES};
 
 /// Parse and validate a resume.
 pub fn load(yaml: &str) -> Result<Resume, Vec<Diagnostic>> {
     let node = parse(yaml)?;
-    let resume: Resume = marked_yaml::from_node(&node).map_err(|error| {
-        let (line, column) = match error.start_mark() {
-            Some(mark) => (mark.line(), mark.column()),
-            None => (1, 1),
-        };
-        vec![Diagnostic {
-            path: error.path().unwrap_or_default().to_owned(),
-            line,
-            column,
-            message: error.into_inner().to_string(),
-        }]
-    })?;
+    let resume: Resume = marked_yaml::from_node(&node).map_err(|error| vec![from_node(&error)])?;
 
     let violations = validate::validate(&resume, &node);
     if violations.is_empty() {
@@ -44,10 +31,30 @@ pub fn load(yaml: &str) -> Result<Resume, Vec<Diagnostic>> {
     }
 }
 
+/// Load a settings file with the same strict, span-aware loader the resume
+/// uses, so a typo in either gets the same diagnostic.
+pub fn load_settings<T: serde::de::DeserializeOwned>(yaml: &str) -> Result<T, Vec<Diagnostic>> {
+    let node = parse(yaml)?;
+    marked_yaml::from_node(&node).map_err(|error| vec![from_node(&error)])
+}
+
 /// Parse YAML into the marked node tree both passes read.
 pub(crate) fn parse(yaml: &str) -> Result<Node, Vec<Diagnostic>> {
     let options = LoaderOptions::default().error_on_duplicate_keys(true);
     marked_yaml::parse_yaml_with_options(0, yaml, options).map_err(|error| vec![from_load(&error)])
+}
+
+fn from_node(error: &marked_yaml::FromNodeError) -> Diagnostic {
+    let (line, column) = match error.start_mark() {
+        Some(mark) => (mark.line(), mark.column()),
+        None => (1, 1),
+    };
+    Diagnostic {
+        path: error.path().unwrap_or_default().to_owned(),
+        line,
+        column,
+        message: error.to_string(),
+    }
 }
 
 fn from_load(error: &LoadError) -> Diagnostic {

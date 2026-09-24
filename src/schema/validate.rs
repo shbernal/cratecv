@@ -3,7 +3,8 @@
 use marked_yaml::Node;
 
 use super::path::Path;
-use super::types::{Contact, Entry, Headline, Resume, Section, Settings, Skill, Source, THEMES};
+use super::types::{Contact, Entry, Headline, Resume, Section, Skill, Source, THEMES};
+use crate::config::ResumeSettings;
 use crate::diagnostic::Diagnostic;
 
 /// Collects every rule violation in one pass, so a caller fixing a resume sees
@@ -102,7 +103,7 @@ fn skill_rules(found: &mut Findings, at: &Path, skill: &Skill) {
     found.source(&at.key("source"), skill.source.as_ref());
 }
 
-fn settings_rules(found: &mut Findings, at: &Path, settings: &Settings) {
+fn settings_rules(found: &mut Findings, at: &Path, settings: &ResumeSettings) {
     if let Some(theme) = &settings.theme {
         let at = at.key("theme");
         found.text(&at, theme);

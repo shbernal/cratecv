@@ -1,0 +1,35 @@
+# A starting point. Replace everything here; `cratecv check` will tell you what
+# is wrong with the result, with a line number.
+name: Your Name
+
+headline:
+  text: One line about you, rewritten for the job you are applying to
+
+contact:
+  email: you@example.com
+  github: github.com/you
+
+sections:
+  - title: Experience
+    entries:
+      - dates: 2022 — present
+        organization: Employer
+        location: City
+        role: Your Role
+        details:
+          - text: What you did, what changed because of it, and the number that shows it.
+          - label: A lead-in
+            text: An optional bold phrase before the sentence, for a bullet that needs one.
+
+  - title: Education
+    entries:
+      - dates: 2018 — 2022
+        organization: Your School
+        details:
+          - text: Degree, and the one thing from it worth a line on a resume.
+
+  - title: Skills
+    layout: rows
+    skills:
+      - label: Languages
+        value: The ones you would be happy to be interviewed in

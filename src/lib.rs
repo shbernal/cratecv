@@ -1,8 +1,10 @@
 //! Compile a YAML resume to a one-page PDF and report what is wrong with it.
 
+pub mod config;
 pub mod diagnostic;
 pub mod error;
 pub mod layout;
+pub mod pdf;
 pub mod report;
 pub mod schema;
 pub mod world;
@@ -12,21 +14,50 @@ pub use error::Error;
 pub use report::{Check, Report};
 pub use schema::{Resume, load};
 
+/// What `cratecv init` writes: a resume small enough to read at a glance and
+/// complete enough to compile.
+pub const STARTER_RESUME: &str = include_str!("../templates/starter.yaml");
+
 use typst_layout::PagedDocument;
 use typst_library::foundations::{Dict, Smart};
 use world::ResumeWorld;
 
-/// Lay a validated resume out.
+/// Lay a validated resume out with the theme its own block names.
 pub fn compile(resume: &Resume) -> Result<PagedDocument, Error> {
     let theme = resume
         .cratecv
         .as_ref()
         .and_then(|settings| settings.theme.as_deref())
         .unwrap_or("default");
+    compile_theme(resume, theme)
+}
+
+/// Lay a validated resume out with a named theme.
+pub fn compile_theme(resume: &Resume, theme: &str) -> Result<PagedDocument, Error> {
     let world = ResumeWorld::new(resume, theme, Dict::new())?;
     let document = world.compile();
     world::evict_cache();
     document
+}
+
+/// Fill in the document information Typst writes into the Info dictionary and
+/// the XMP packet. Title and author come from the resume, because nobody should
+/// have to state their own name twice.
+pub fn describe(
+    document: &mut PagedDocument,
+    resume: &Resume,
+    meta: &config::PdfMeta,
+    when: Option<typst_library::foundations::Datetime>,
+) {
+    let info = document.info_mut();
+    info.title = Some(resume.name.as_str().into());
+    info.author = vec![resume.name.as_str().into()];
+    info.keywords = meta
+        .keywords
+        .iter()
+        .map(|word| word.as_str().into())
+        .collect();
+    info.date = Smart::Custom(when);
 }
 
 /// Load, lay out and judge a resume in one step: everything `check` does.
@@ -44,14 +75,15 @@ pub fn check(yaml: &str, settings: &Check) -> Result<Report, Error> {
     ))
 }
 
-/// Export a laid-out document to PDF bytes.
-pub fn export_pdf(document: &PagedDocument) -> Result<Vec<u8>, Error> {
+/// Export a laid-out document to PDF bytes, carrying the resolved metadata.
+pub fn export_pdf(document: &PagedDocument, meta: &config::PdfMeta) -> Result<Vec<u8>, Error> {
     let options = typst_pdf::PdfOptions {
-        creator: Smart::Custom(Some(creator())),
+        creator: Smart::Custom(Some(meta.creator.clone())),
         ..Default::default()
     };
-    typst_pdf::pdf(document, &options)
-        .map_err(|errors| Error::Export(errors.iter().map(|e| e.message.to_string()).collect()))
+    let bytes = typst_pdf::pdf(document, &options)
+        .map_err(|errors| Error::Export(errors.iter().map(|e| e.message.to_string()).collect()))?;
+    pdf::stamp(bytes, meta)
 }
 
 /// Render one page to PNG at the given resolution.
@@ -76,8 +108,4 @@ pub fn export_svg(document: &PagedDocument) -> String {
         &typst_svg::SvgOptions::default(),
         typst_library::layout::Abs::pt(12.0),
     )
-}
-
-fn creator() -> String {
-    format!("cratecv {}", env!("CARGO_PKG_VERSION"))
 }

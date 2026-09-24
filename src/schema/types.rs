@@ -2,6 +2,8 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::config::ResumeSettings;
+
 /// The built-in themes a resume may name.
 pub const THEMES: &[&str] = &["default"];
 
@@ -16,7 +18,7 @@ pub struct Resume {
     pub sections: Vec<Section>,
     /// Settings for this tool. Consumed during validation, never rendered.
     #[serde(default, skip_serializing)]
-    pub cratecv: Option<Settings>,
+    pub cratecv: Option<ResumeSettings>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -103,14 +105,6 @@ pub enum Source {
 pub enum Layout {
     Rows,
     Badges,
-}
-
-/// The resume's own `cratecv:` block.
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase", deny_unknown_fields)]
-pub struct Settings {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub theme: Option<String>,
 }
 
 impl Section {

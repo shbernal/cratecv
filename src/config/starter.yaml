@@ -1,0 +1,39 @@
+# cratecv configuration. Every value here is the default, so uncommenting a
+# line changes nothing until you change its number.
+#
+# Settings are stated at four levels, most specific winning:
+#   1. these defaults
+#   2. this file, for every resume on this machine
+#   3. a `cratecv:` block in a resume, for that document everywhere
+#   4. command-line flags, for one invocation
+#
+# A resume's block takes `theme`, `pdf` and `check`. `output` and `preview`
+# describe this machine, so they only live here.
+
+# theme: default
+
+# pdf:
+#   # Metadata only. The file still carries this tool's font subsets, object
+#   # layout and structure tree, whatever it says here.
+#   creator: cratecv
+#   producer: cratecv
+#   # mtime, none, or a quoted timestamp such as "2024-03-11T09:12:00Z".
+#   date: mtime
+#   keywords: []
+
+# check:
+#   # One page is the guarantee. It is a value, not a severity.
+#   maxPages: 1
+#   looseLines:
+#     # error | warn | silent. Not `off`, which YAML reads as a boolean.
+#     severity: warn
+#     shortLine: 0.75
+#     shortLastLine: 0.35
+#     looseLineGap: 0.2
+#     widowWords: 1
+
+# output:
+#   dir: .
+
+# preview:
+#   dpi: 150
