@@ -38,6 +38,18 @@ const MAIN: &str = "/main.typ";
 
 const DEFAULT_TEMPLATE: &str = include_str!("../../templates/default.typ");
 
+/// Artwork the built-in themes draw, served alongside the template.
+const ICONS: [(&str, &[u8]); 2] = [
+    (
+        "/icons/github.svg",
+        include_bytes!("../../assets/icons/github.svg"),
+    ),
+    (
+        "/icons/linkedin.svg",
+        include_bytes!("../../assets/icons/linkedin.svg"),
+    ),
+];
+
 /// Resolve a built-in theme name to its source.
 fn theme_source(name: &str) -> Option<&'static str> {
     match name {
@@ -77,6 +89,9 @@ impl ResumeWorld {
 
         let mut files = HashMap::new();
         files.insert(file_id(DATA), Bytes::new(data));
+        for (path, bytes) in ICONS {
+            files.insert(file_id(path), Bytes::new(bytes));
+        }
 
         let (fonts, book) = fonts::embedded();
         Ok(Self {
