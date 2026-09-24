@@ -22,6 +22,28 @@ impl Path {
         Self::default()
     }
 
+    /// Read back a path the template wrote into a marker. Anything that is not
+    /// this project's own spelling yields `None` rather than a partial walk.
+    pub fn parse(text: &str) -> Option<Self> {
+        let mut segments = Vec::new();
+        for part in text.split('.') {
+            let (key, mut rest) = match part.find('[') {
+                Some(at) => part.split_at(at),
+                None => (part, ""),
+            };
+            if key.is_empty() {
+                return None;
+            }
+            segments.push(Segment::Key(key.to_owned()));
+            while !rest.is_empty() {
+                let end = rest.find(']')?;
+                segments.push(Segment::Index(rest[1..end].parse().ok()?));
+                rest = &rest[end + 1..];
+            }
+        }
+        Some(Self(segments))
+    }
+
     #[must_use]
     pub fn key(&self, key: &str) -> Self {
         let mut next = self.clone();

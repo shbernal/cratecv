@@ -1,0 +1,9 @@
+name: Short Line
+contact:
+  email: short@example.test
+sections:
+  - title: Experience
+    entries:
+      - dates: 2020
+        details:
+          - text: Shipped the thing on time.

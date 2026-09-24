@@ -1,0 +1,11 @@
+name: Clean Resume
+contact:
+  email: clean@example.test
+sections:
+  - title: Experience
+    entries:
+      - dates: 2020 — present
+        organization: Fillwell
+        role: Engineer
+        details:
+          - text: A bullet whose text is long enough to reach the end of the line it was given, and short enough that it needs exactly two full lines to say so without leaving a gap.

@@ -37,9 +37,14 @@
 // records the measure the layout engine actually broke it against. Everything
 // the guardrails report comes from one of these; anything unmarked is simply
 // absent from the walk, so there is no exemption list to maintain.
+//
+// The closing marker is what bounds a block. Without it the walk would have to
+// infer where a block ends from how Typst happened to nest its frames, and the
+// bullet glyph after the last line would read as a line of the bullet.
 #let measured(path, body) = block(width: 100%, {
   place(context layout(size => metadata((path: path, available: size.width / 1pt))))
   body
+  place(metadata((end: path)))
 })
 
 #let icon(path) = box(

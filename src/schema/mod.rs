@@ -5,6 +5,7 @@
 //! then checked against the typed values, looking each violation's span back up
 //! by its path.
 
+mod locate;
 mod path;
 mod types;
 mod validate;
@@ -13,6 +14,7 @@ use marked_yaml::{LoadError, LoaderOptions, Node};
 
 use crate::diagnostic::Diagnostic;
 
+pub use locate::Locator;
 pub use path::Path;
 pub use types::{
     Bullet, Contact, Entry, Headline, Layout, Resume, Section, Settings, Skill, Source, THEMES,

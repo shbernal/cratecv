@@ -1,0 +1,9 @@
+name: Loose Line
+contact:
+  email: loose@example.test
+sections:
+  - title: Experience
+    entries:
+      - dates: 2020
+        details:
+          - text: Owned the release pipeline and every one of our reproducibilityverificationinfrastructureharness runs, which went out nightly and woke up nobody at all for two whole quarters.

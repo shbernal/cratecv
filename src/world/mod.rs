@@ -104,6 +104,24 @@ impl ResumeWorld {
         })
     }
 
+    /// A world over an arbitrary template, for exercising the frame walk
+    /// against layouts the built-in theme deliberately never produces.
+    #[cfg(test)]
+    pub(crate) fn from_template(template: &str) -> Self {
+        let main = file_id(MAIN);
+        let mut sources = HashMap::new();
+        sources.insert(main, Source::new(main, template.to_owned()));
+        let (fonts, book) = fonts::embedded();
+        Self {
+            library: LazyHash::new(Library::default()),
+            book: LazyHash::new(book),
+            fonts,
+            main,
+            sources,
+            files: HashMap::new(),
+        }
+    }
+
     /// Lay the resume out. Warnings are dropped: the template is ours, so a
     /// warning from it is a bug to fix rather than news for the caller.
     pub fn compile(&self) -> Result<PagedDocument, Error> {

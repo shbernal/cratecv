@@ -1,0 +1,90 @@
+name: Overflowing Resume
+contact:
+  email: over@example.test
+sections:
+  - title: Experience
+    entries:
+      - dates: 1991 — 1993
+        organization: Employer 1
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 1 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1992 — 1994
+        organization: Employer 2
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 2 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1993 — 1995
+        organization: Employer 3
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 3 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1994 — 1996
+        organization: Employer 4
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 4 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1995 — 1997
+        organization: Employer 5
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 5 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1996 — 1998
+        organization: Employer 6
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 6 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1997 — 1999
+        organization: Employer 7
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 7 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1998 — 2000
+        organization: Employer 8
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 8 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 1999 — 2001
+        organization: Employer 9
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 9 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 2000 — 2002
+        organization: Employer 10
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 10 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 2001 — 2003
+        organization: Employer 11
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 11 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.
+      - dates: 2002 — 2004
+        organization: Employer 12
+        location: Somewhere
+        role: Engineer
+        details:
+          - text: Kept the build honest, the pager quiet and the release notes accurate, for 12 consecutive quarters without once skipping the review that made it possible.
+          - text: Wrote down what the team already knew, so that the next person did not have to learn it twice from the same outage on a Friday afternoon in winter.

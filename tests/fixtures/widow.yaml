@@ -1,0 +1,9 @@
+name: Widow
+contact:
+  email: widow@example.test
+sections:
+  - title: Experience
+    entries:
+      - dates: 2020
+        details:
+          - text: Rewrote the ingestion pipeline so that the nightly batch finished well before breakfast, overnight.

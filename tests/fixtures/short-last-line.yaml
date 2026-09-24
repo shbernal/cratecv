@@ -1,0 +1,9 @@
+name: Short Last Line
+contact:
+  email: last@example.test
+sections:
+  - title: Experience
+    entries:
+      - dates: 2020
+        details:
+          - text: Rewrote the ingestion pipeline so that the nightly batch finished before breakfast rather than lunch, every day.

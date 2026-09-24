@@ -2,11 +2,14 @@
 
 pub mod diagnostic;
 pub mod error;
+pub mod layout;
+pub mod report;
 pub mod schema;
 pub mod world;
 
 pub use diagnostic::Diagnostic;
 pub use error::Error;
+pub use report::{Check, Report};
 pub use schema::{Resume, load};
 
 use typst_layout::PagedDocument;
@@ -24,6 +27,21 @@ pub fn compile(resume: &Resume) -> Result<PagedDocument, Error> {
     let document = world.compile();
     world::evict_cache();
     document
+}
+
+/// Load, lay out and judge a resume in one step: everything `check` does.
+pub fn check(yaml: &str, settings: &Check) -> Result<Report, Error> {
+    let resume = match load(yaml) {
+        Ok(resume) => resume,
+        Err(errors) => return Ok(Report::rejected(errors, settings)),
+    };
+    let document = compile(&resume)?;
+    let measured = layout::measure(&document)?;
+    Ok(report::report(
+        &measured,
+        &schema::Locator::new(yaml),
+        settings,
+    ))
 }
 
 /// Export a laid-out document to PDF bytes.
