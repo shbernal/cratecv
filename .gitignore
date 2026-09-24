@@ -2,3 +2,4 @@
 /output
 .DS_Store
 .env*
+/assets/fonts/source
