@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  version:
+    name: version matches the tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      # The tag is the source of truth. A manifest that disagrees with it is a
+      # mistake worth stopping for, not something to reconcile silently.
+      - name: Compare
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest=$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -1)
+          if [ "$tag" != "$manifest" ]; then
+            echo "tag $tag does not match Cargo.toml $manifest" >&2
+            exit 1
+          fi
+
+  build:
+    needs: version
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Both Apple targets come off one arm runner: a pure Rust binary
+          # cross-compiles there with nothing but a rustup target added.
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          # Native Linux runners rather than cross, so the .deb architecture is
+          # real and no emulation is involved.
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            deb: true
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-24.04-arm
+            deb: true
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --profile dist --target ${{ matrix.target }}
+
+      - name: Package (unix)
+        if: runner.os != 'Windows'
+        run: |
+          staging=cratecv-${{ matrix.target }}
+          mkdir "$staging"
+          cp target/${{ matrix.target }}/dist/cratecv "$staging/"
+          cp README.md LICENSE THIRD_PARTY_NOTICES.md "$staging/"
+          tar czf "$staging.tar.gz" "$staging"
+
+      - name: Package (windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $staging = "cratecv-${{ matrix.target }}"
+          New-Item -ItemType Directory -Path $staging | Out-Null
+          Copy-Item "target/${{ matrix.target }}/dist/cratecv.exe" $staging
+          Copy-Item README.md, LICENSE, THIRD_PARTY_NOTICES.md $staging
+          Compress-Archive -Path $staging -DestinationPath "$staging.zip"
+
+      - name: Build .deb
+        if: matrix.deb
+        run: |
+          cargo install cargo-deb --locked
+          cargo deb --profile dist --target ${{ matrix.target }} --no-build --output .
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ${{ matrix.target }}
+          path: |
+            cratecv-*.tar.gz
+            cratecv-*.zip
+            *.deb
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Checksums
+        working-directory: artifacts
+        run: sha256sum * > SHA256SUMS
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true

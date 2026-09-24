@@ -1,0 +1,19 @@
+# Local hooks. `lefthook install` wires them up.
+remotes:
+  - git_url: https://github.com/shbernal/lefthook-rules
+    refetch: true
+    configs:
+      - no-ai-attribution.yml
+
+pre-commit:
+  parallel: true
+  commands:
+    fmt:
+      glob: "*.rs"
+      run: cargo fmt --check
+    clippy:
+      glob: "*.rs"
+      run: cargo clippy --all-targets -- -D warnings
+    charcheck:
+      glob: "*.md"
+      run: charcheck {staged_files}

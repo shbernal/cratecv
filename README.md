@@ -12,20 +12,26 @@ survive the text extractor an applicant tracking system will run over it.
   resume runs over, and the report says by how much.
 - Bullets that end far short of the line are reported with their path into the
   YAML and their fill ratio, so the next revision can be precise.
-- Output is tagged PDF with embedded fonts, so the text comes back out in
-  reading order.
+- Output is tagged PDF with embedded fonts and passes PDF/UA-1 validation, so
+  the text comes back out of an applicant tracking system in reading order.
 - `check --json` is the primary interface. It is meant to be driven in a loop
   by a person or by an assistant.
 
-Status: early. Not yet released.
+Status: early.
 
 ## Install
 
-Not published yet. Build from source with a Rust toolchain:
+Download a binary for your platform from the
+[releases](https://github.com/shbernal/cratecv/releases), or build from source
+with a Rust toolchain:
 
 ```bash
-cargo install --path .
+cargo install --git https://github.com/shbernal/cratecv
 ```
+
+The binary carries its own fonts and its own typesetter. There is no browser,
+no Node, and no system font to install, which is also why the same YAML lays
+out identically on every machine.
 
 ## Use
 

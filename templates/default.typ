@@ -47,10 +47,12 @@
   place(metadata((end: path)))
 })
 
-#let icon(path) = box(
+// `alt` is not decoration: an extractor walking the structure tree reads it,
+// and PDF/UA-1 export refuses to write without it.
+#let icon(path, alt) = box(
   baseline: 1.5pt,
   height: small * 0.85,
-  image(path, fit: "contain"),
+  image(path, alt: alt, fit: "contain"),
 )
 
 // ── header ────────────────────────────────────────────────────────────────
@@ -61,10 +63,16 @@
   if "phone" in c { out.push(text(c.phone.replace(" ", sym.space.nobreak))) }
   if "email" in c { out.push(link("mailto:" + c.email, c.email)) }
   if "github" in c {
-    out.push(link("https://" + c.github, box(icon("/icons/github.svg")) + h(3pt) + c.github))
+    out.push(link(
+      "https://" + c.github,
+      box(icon("/icons/github.svg", "GitHub")) + h(3pt) + c.github,
+    ))
   }
   if "linkedin" in c {
-    out.push(link("https://" + c.linkedin, box(icon("/icons/linkedin.svg")) + h(3pt) + c.linkedin))
+    out.push(link(
+      "https://" + c.linkedin,
+      box(icon("/icons/linkedin.svg", "LinkedIn")) + h(3pt) + c.linkedin,
+    ))
   }
   out
 }

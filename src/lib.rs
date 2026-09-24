@@ -95,8 +95,22 @@ pub fn check(yaml: &str, settings: &Check) -> Result<Report, Error> {
 
 /// Export a laid-out document to PDF bytes, carrying the resolved metadata.
 pub fn export_pdf(document: &PagedDocument, meta: &config::PdfMeta) -> Result<Vec<u8>, Error> {
+    export_pdf_conforming(document, meta, &[])
+}
+
+/// Export while enforcing PDF standards. Typst validates at export and refuses
+/// to write when it finds a critical problem, so asking for `ua-1` is a
+/// conformance check as much as an export mode.
+pub fn export_pdf_conforming(
+    document: &PagedDocument,
+    meta: &config::PdfMeta,
+    standards: &[typst_pdf::PdfStandard],
+) -> Result<Vec<u8>, Error> {
+    let standards =
+        typst_pdf::PdfStandards::new(standards).map_err(|why| Error::Export(format!("{why:?}")))?;
     let options = typst_pdf::PdfOptions {
         creator: Smart::Custom(Some(meta.creator.clone())),
+        standards,
         ..Default::default()
     };
     let bytes = typst_pdf::pdf(document, &options)
