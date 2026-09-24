@@ -35,10 +35,23 @@ typst-render = "=0.15.1"
 typst-svg = "=0.15.1"
 typst-utils = "=0.15.1"
 
-[profile.release]
+# `release` stays quick, because ~/.local/bin/cratecv points at its output and
+# relinking it is part of the edit loop. The shipped binaries use `dist`.
+[package.metadata.deb]
+assets = [
+    ["target/*/dist/cratecv", "usr/bin/", "755"],
+    ["README.md", "usr/share/doc/cratecv/README.md", "644"],
+    ["THIRD_PARTY_NOTICES.md", "usr/share/doc/cratecv/THIRD_PARTY_NOTICES.md", "644"],
+]
+extended-description = """
+Compiles a YAML resume into a one-page PDF with Typst, and reports layout problems - overflow, and lines that leave space behind - as JSON a script or an assistant can act on."""
+
+[profile.dist]
+inherits = "release"
 lto = true
 strip = true
 
 [dev-dependencies]
 jsonschema = "0.57"
 marked-yaml = "0.8.0"
+sha2 = "0.11.0"

@@ -624,6 +624,7 @@ dependencies = [
  "schemars",
  "serde",
  "serde_json",
+ "sha2",
  "typst",
  "typst-layout",
  "typst-library",

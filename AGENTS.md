@@ -9,6 +9,9 @@ layout problems as JSON that an agent can act on.
   - `cargo test`
   - `cargo clippy --all-targets -- -D warnings`
   - `cargo fmt --check`
+  - The `cratecv` on PATH is a symlink to `target/release/cratecv`, so
+    `cargo build --release` republishes it. Release archives use the `dist`
+    profile instead.
 
 - Architecture
   - `src/lib.rs` is the library, `src/main.rs` the CLI. Everything the CLI does
@@ -18,6 +21,8 @@ layout problems as JSON that an agent can act on.
   - Guardrails read the laid-out `PagedDocument` frame tree, not the PDF. Page
     count, overflow, and per-line fill all come from `Frame::items()`.
   - Fonts are compiled into the binary. The tool never reads system fonts.
+  - `tests/fixtures/resume.pdf.sha256` pins the example PDF. Output is
+    deterministic, so regenerate it deliberately when the change is intended.
 
 - Iron Laws
   - Tokens are expensive, state of the art models need minimal guidance, don't repeat yourself, don't babysit, don't be over-specific.
