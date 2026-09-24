@@ -54,6 +54,30 @@ pub fn export_pdf(document: &PagedDocument) -> Result<Vec<u8>, Error> {
         .map_err(|errors| Error::Export(errors.iter().map(|e| e.message.to_string()).collect()))
 }
 
+/// Render one page to PNG at the given resolution.
+pub fn export_png(document: &PagedDocument, dpi: f64) -> Result<Vec<u8>, Error> {
+    let page = document
+        .pages()
+        .first()
+        .ok_or_else(|| Error::Export("the document has no pages".into()))?;
+    let options = typst_render::RenderOptions {
+        pixel_per_pt: typst_utils::Scalar::new(dpi / 72.0),
+        ..Default::default()
+    };
+    typst_render::render(page, &options)
+        .encode_png()
+        .map_err(|why| Error::Export(why.to_string()))
+}
+
+/// Render the whole document to one SVG, pages stacked.
+pub fn export_svg(document: &PagedDocument) -> String {
+    typst_svg::svg_merged(
+        document,
+        &typst_svg::SvgOptions::default(),
+        typst_library::layout::Abs::pt(12.0),
+    )
+}
+
 fn creator() -> String {
     format!("cratecv {}", env!("CARGO_PKG_VERSION"))
 }

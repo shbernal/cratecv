@@ -4,6 +4,7 @@
 //! behind it, and it is going to be read by things that cannot ask a follow-up
 //! question, so it stays flat and it says what it measured against.
 
+mod human;
 mod rules;
 
 use serde::{Deserialize, Serialize};
@@ -12,6 +13,7 @@ use crate::diagnostic::Diagnostic;
 use crate::layout::Measured;
 use crate::schema::Locator;
 
+pub use human::{message, summary};
 pub use rules::LooseKind;
 
 /// What a check does when it finds something.
