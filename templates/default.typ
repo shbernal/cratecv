@@ -218,3 +218,7 @@
   }
   blocks.join(v(4.5pt * theme.density))
 }
+
+// Where the last page's content area ends, so the report can say how much of
+// it the resume leaves empty.
+#place(bottom, metadata((floor: true)))

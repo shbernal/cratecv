@@ -25,6 +25,13 @@ fn a_resume_with_nothing_wrong_says_so() {
     assert!(report.ok);
     assert_eq!(report.pages, 1);
     assert!(report.overflow_mm.is_none());
+    let left = report
+        .remaining_mm
+        .expect("the theme marks where the page ends");
+    assert!(
+        (200.0..270.0).contains(&left),
+        "{left}mm left below a few lines"
+    );
     assert!(report.schema_errors.is_empty());
     assert!(report.loose_lines.is_empty(), "{:?}", report.loose_lines);
     assert_eq!(
@@ -80,6 +87,10 @@ fn running_over_the_page_says_by_how_far() {
     assert_eq!(report.pages, 2);
     let over = report.overflow_mm.expect("it ran over");
     assert!((36.0..40.0).contains(&over), "over by {over}mm");
+    assert!(
+        report.remaining_mm.is_none(),
+        "nothing is left on a page that ran over"
+    );
 }
 
 #[test]

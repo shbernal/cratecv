@@ -22,9 +22,13 @@ pub fn summary(report: &Report, file: &str) -> String {
             over,
         );
     } else {
+        let left = report
+            .remaining_mm
+            .map(|mm| format!(", {mm:.0}mm left at the bottom"))
+            .unwrap_or_default();
         let _ = writeln!(
             out,
-            "{}, within the {} allowed.",
+            "{}, within the {} allowed{left}.",
             plural(report.pages, "page", "pages"),
             plural(report.max_pages, "page", "pages"),
         );

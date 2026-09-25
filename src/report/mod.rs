@@ -115,6 +115,10 @@ pub struct Report {
     /// How far past `maxPages` the content runs. Set only when it does.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub overflow_mm: Option<f64>,
+    /// How much of the last page is left empty below the last line's baseline.
+    /// Set only when the content fits.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub remaining_mm: Option<f64>,
     pub schema_errors: Vec<Diagnostic>,
     pub loose_lines: Vec<LooseLine>,
     /// Echoed, so `looseLines: []` at `silent` cannot read as a clean resume.
@@ -133,6 +137,7 @@ impl Report {
             pages: 0,
             max_pages: check.max_pages,
             overflow_mm: None,
+            remaining_mm: None,
             schema_errors: errors,
             loose_lines: Vec::new(),
             loose_line_severity: check.loose_lines.severity,
@@ -163,6 +168,7 @@ pub fn report(measured: &Measured, locator: &Locator, check: &Check) -> Report {
         pages: measured.pages,
         max_pages: check.max_pages,
         overflow_mm: measured.overflow_mm(check.max_pages),
+        remaining_mm: measured.remaining_mm(check.max_pages),
         schema_errors: Vec::new(),
         loose_lines: findings,
         loose_line_severity: check.loose_lines.severity,

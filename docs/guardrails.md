@@ -10,7 +10,8 @@ tree rather than inferences from the PDF — see
 `maxPages` defaults to 1. When the content runs over, `overflowMm` says how far
 past the last allowed page it reaches — computed from the position of the last
 run, not estimated — so the message can say "over by 23mm" rather than "over by
-a page".
+a page". When it fits, `remainingMm` says how much of the last page is left
+below the last line's baseline, down to the bottom margin the theme marks.
 
 Page count has no severity. It is the guarantee, and a second way to express the
 same intent would quietly disable it. `build` writes nothing when it is

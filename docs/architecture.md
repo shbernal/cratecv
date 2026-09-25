@@ -21,7 +21,8 @@ resume.yaml ─► parse + validate ─► Resume ─► canonical JSON ─► T
   icons. Nothing is read from disk, and no system font is consulted
   ([ADR 0001](technical/adr/0001-fonts-compiled-into-the-binary.md)).
 - **`templates/default.typ`** lays the page out and marks each measurable block
-  with its YAML path and the measure the layout engine gave it
+  with its YAML path and the measure the layout engine gave it, plus where
+  the last page's content area ends
   ([ADR 0002](technical/adr/0002-frame-tree-markers-attribute-text.md)).
 - **`layout/`** walks the laid-out frames and turns those markers into blocks,
   lines and fill ratios

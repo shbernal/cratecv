@@ -63,6 +63,9 @@ pub struct Measured {
     pub page_heights: Vec<f64>,
     /// How far down the last page content reaches, in points.
     pub last_ink: f64,
+    /// Where the last page's content area ends, in points from its top, when
+    /// the theme marks it.
+    pub floor: Option<f64>,
     pub blocks: Vec<Block>,
 }
 
@@ -77,6 +80,17 @@ impl Measured {
         let beyond: f64 = self.page_heights[max_pages..self.pages - 1].iter().sum();
         Some(Abs::pt(beyond + self.last_ink).to_mm())
     }
+
+    /// How much of the last page's content area is left below the last line's
+    /// baseline, in millimetres. `None` when the content runs over, or when the
+    /// theme does not mark where the content area ends.
+    pub fn remaining_mm(&self, max_pages: usize) -> Option<f64> {
+        if self.pages > max_pages {
+            return None;
+        }
+        self.floor
+            .map(|floor| Abs::pt((floor - self.last_ink).max(0.0)).to_mm())
+    }
 }
 
 /// Runs and markers, in the order the page lays them down.
@@ -86,6 +100,7 @@ enum Item {
         available: f64,
     },
     Close,
+    Floor(f64),
     Run {
         baseline: f64,
         width: f64,
@@ -97,6 +112,7 @@ enum Item {
 pub fn measure(document: &PagedDocument) -> Result<Measured, Error> {
     let mut page_heights = Vec::new();
     let mut last_ink: f64 = 0.0;
+    let mut floor = None;
     let mut blocks: Vec<Block> = Vec::new();
 
     for (number, page) in document.pages().iter().enumerate() {
@@ -114,6 +130,10 @@ pub fn measure(document: &PagedDocument) -> Result<Measured, Error> {
                     _ => None,
                 })
                 .fold(0.0, f64::max);
+            floor = items.iter().find_map(|item| match item {
+                Item::Floor(y) => Some(*y),
+                _ => None,
+            });
         }
 
         collect(items, &mut blocks);
@@ -123,6 +143,7 @@ pub fn measure(document: &PagedDocument) -> Result<Measured, Error> {
         pages: document.pages().len(),
         page_heights,
         last_ink,
+        floor,
         blocks,
     })
 }
@@ -154,6 +175,7 @@ fn collect(items: Vec<Item>, blocks: &mut Vec<Block>) {
                     blocks.push(block);
                 }
             }
+            Item::Floor(_) => {}
             Item::Run {
                 baseline: y,
                 width,
@@ -227,7 +249,7 @@ fn walk(
                 });
             }
             FrameItem::Tag(Tag::Start(content, _)) => {
-                if let Some(item) = marker(content) {
+                if let Some(item) = marker(content, at.y.to_pt()) {
                     out.push(item);
                 }
             }
@@ -237,13 +259,17 @@ fn walk(
     Ok(())
 }
 
-/// The payload the template attached to the start or end of a measurable block.
-fn marker(content: &typst_library::foundations::Content) -> Option<Item> {
+/// The payload the template attached to the start or end of a measurable
+/// block, or to the bottom of the content area, which sits at `y`.
+fn marker(content: &typst_library::foundations::Content, y: f64) -> Option<Item> {
     let Value::Dict(dict) = &content.to_packed::<MetadataElem>()?.value else {
         return None;
     };
     if dict.get("end").is_ok() {
         return Some(Item::Close);
+    }
+    if dict.get("floor").is_ok() {
+        return Some(Item::Floor(y));
     }
     let path = match dict.get("path") {
         Ok(Value::Str(text)) => text.to_string(),

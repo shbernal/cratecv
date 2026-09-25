@@ -49,7 +49,8 @@ problem.
 `wastedLines` is the total space the findings add up to, in whole lines. It
 answers a question you cannot answer from the findings one at a time: whether
 there is enough slack to fit another bullet, or whether the page is genuinely
-full.
+full. `remainingMm` is the other half: the empty space left at the bottom of the
+page. A bullet line is about 4.5mm.
 
 ## When it runs over a page
 
