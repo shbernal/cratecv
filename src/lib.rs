@@ -59,8 +59,8 @@ pub fn compile_theme(resume: &Resume, theme: &str) -> Result<PagedDocument, Erro
 }
 
 /// Fill in the document information Typst writes into the Info dictionary and
-/// the XMP packet. Title and author come from the resume, because nobody should
-/// have to state their own name twice.
+/// the XMP packet. Title and author come from the resume's name, because nobody
+/// should have to state it twice.
 pub fn describe(
     document: &mut PagedDocument,
     resume: &Resume,
@@ -68,7 +68,7 @@ pub fn describe(
     when: Option<typst_library::foundations::Datetime>,
 ) {
     let info = document.info_mut();
-    info.title = Some(resume.name.as_str().into());
+    info.title = Some(format!("{} - Resume", resume.name).as_str().into());
     info.author = vec![resume.name.as_str().into()];
     info.keywords = meta
         .keywords

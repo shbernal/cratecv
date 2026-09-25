@@ -68,7 +68,8 @@ accent colour are theme-internal, because every number the report gives you is
 measured against the laid-out page. See
 [ADR 0003](technical/adr/0003-typography-is-theme-internal.md).
 
-Title and author are not here either: they come from the resume's `name`.
+Title and author are not here either: they come from the resume's `name`, and
+the title reads `<name> - Resume`.
 
 ## Severity, and what the exit code means
 
