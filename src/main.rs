@@ -25,7 +25,7 @@ mod code {
 }
 
 #[derive(Parser)]
-#[command(name = "cratecv", version, about, long_about = None)]
+#[command(name = "cratecv", version = env!("CRATECV_VERSION"), about, long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Command,

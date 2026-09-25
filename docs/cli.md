@@ -10,6 +10,9 @@ cratecv watch   cv.yaml [-o PATH] [--max-pages N]
 `-o` takes a file or a directory. A directory receives the output under a name
 derived from the resume's `name`, so `-o out/` writes `out/mira-halvorsen.pdf`.
 
+`cratecv --version` names the commit the binary was built from, with `-dirty`
+when the tree had uncommitted changes, so a PDF can be traced to its renderer.
+
 ## Exit codes
 
 Callers branch on these, so they are part of the contract. They track severity,
