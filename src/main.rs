@@ -197,10 +197,9 @@ fn check(input: &Path, json: bool, flags: Flags) -> Result<ExitCode, Error> {
 
     if json {
         // Nothing but the report reaches stdout, so this stays pipeable.
-        println!(
-            "{}",
-            serde_json::to_string_pretty(&report).map_err(|why| Error::Export(why.to_string()))?
-        );
+        emit(
+            &serde_json::to_string_pretty(&report).map_err(|why| Error::Export(why.to_string()))?,
+        )?;
     }
 
     if !report.schema_errors.is_empty() {
@@ -277,11 +276,10 @@ fn watch(input: &Path, flags: Flags) -> Result<ExitCode, Error> {
 }
 
 fn schema() -> Result<ExitCode, Error> {
-    println!(
-        "{}",
-        serde_json::to_string_pretty(&cratecv::json_schema())
-            .map_err(|why| Error::Export(why.to_string()))?
-    );
+    emit(
+        &serde_json::to_string_pretty(&cratecv::json_schema())
+            .map_err(|why| Error::Export(why.to_string()))?,
+    )?;
     Ok(code::OK)
 }
 
@@ -303,6 +301,16 @@ fn init(directory: Option<&Path>) -> Result<ExitCode, Error> {
         eprintln!("Wrote {}", config.display());
     }
     Ok(code::OK)
+}
+
+/// Print to stdout. A reader that stops early, like `head`, closes the pipe,
+/// which is its choice rather than a failure of this run.
+fn emit(text: &str) -> Result<(), Error> {
+    use std::io::Write;
+    match writeln!(std::io::stdout().lock(), "{text}") {
+        Err(why) if why.kind() != std::io::ErrorKind::BrokenPipe => Err(why.into()),
+        _ => Ok(()),
+    }
 }
 
 fn watch_failed(why: notify::Error) -> Error {
