@@ -56,9 +56,11 @@ cratecv schema                      # JSON Schema for the resume format
 
 ## For assistants
 
-`skills/write-resume/SKILL.md` teaches the loop: edit the YAML, run
-`cratecv check --json`, fix what the report names by path, repeat. Copy it into
-your project.
+`skills/cratecv/SKILL.md` teaches the loop: edit the YAML, run
+`cratecv check --json`, fix what the report names by path, repeat. Copy or link it into
+your project. It covers the tool only; what the resume says belongs to your
+own skill. A project that wraps `cratecv` in a script should pass the command
+and its arguments through unchanged, so the skill still reads true.
 
 ## License
 

@@ -1,9 +1,9 @@
 ---
-name: write-resume
-description: Write or revise a resume in cratecv's YAML format and drive it to a clean one-page PDF. Use when editing a resume YAML file, tailoring one to a job posting, or acting on a cratecv layout report.
+name: cratecv
+description: Compile a cratecv YAML resume to a one-page PDF and fix what its layout report finds. Use when running cratecv, editing a resume in its YAML format, or acting on a `cratecv check` report. Covers the format, the report and layout fixes, not what a resume should say.
 ---
 
-# Writing a resume with cratecv
+# cratecv
 
 `cratecv` compiles a YAML resume to a one-page PDF and reports, as JSON, which
 lines left space behind and by how much. You edit the YAML, it measures the
@@ -14,7 +14,8 @@ page, you edit again.
 1. Write or edit the YAML.
 2. `cratecv check cv.yaml --json`
 3. Fix what the report names, by path.
-4. Repeat until `ok` is true, then `cratecv build cv.yaml -o cv.pdf`.
+4. Repeat until `looseLines` is empty or what is left is a deliberate choice,
+   then `cratecv build cv.yaml -o cv.pdf`.
 
 Run `cratecv schema` for the JSON Schema of the format. It is generated from
 the parser's own types, so it cannot describe something the tool would reject.
@@ -70,14 +71,11 @@ cratecv:
     maxPages: 2
 ```
 
-## Writing the content
+## The format
 
-- A bullet says what changed and what it cost or saved. A bullet that describes
-  a responsibility rather than an outcome will usually also be a `shortLine`.
-- `label` is a bold lead-in before the sentence. Use it when a bullet needs a
-  category; do not use it on every bullet.
 - `dates` is the only required field on an entry. An education entry with no
   role and a project with no location are both legal and both look deliberate.
+- `label` is a bold lead-in before a bullet's sentence.
 - Skills in `rows` layout are measured, so a nearly empty row is reported. Use
   `badges` for short lists like languages, which are not measured because a
   badge is sized to its own text.
