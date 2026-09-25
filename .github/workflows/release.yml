@@ -15,7 +15,7 @@ jobs:
     name: version matches the tag
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       # The tag is the source of truth. A manifest that disagrees with it is a
       # mistake worth stopping for, not something to reconcile silently.
       - name: Compare
@@ -52,7 +52,7 @@ jobs:
             os: ubuntu-24.04-arm
             deb: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
@@ -86,7 +86,7 @@ jobs:
           cargo install cargo-deb --locked
           cargo deb --profile dist --target ${{ matrix.target }} --no-build --output .
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.target }}
           path: |
@@ -99,14 +99,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
           merge-multiple: true
       - name: Checksums
         working-directory: artifacts
         run: sha256sum * > SHA256SUMS
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: artifacts/*
           generate_release_notes: true

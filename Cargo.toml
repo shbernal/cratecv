@@ -35,8 +35,9 @@ typst-render = "=0.15.1"
 typst-svg = "=0.15.1"
 typst-utils = "=0.15.1"
 
-# `release` stays quick, because ~/.local/bin/cratecv points at its output and
-# relinking it is part of the edit loop. The shipped binaries use `dist`.
+# `release` stays quick, because a locally installed `cratecv` points at its
+# output and relinking it is part of the edit loop. The shipped binaries use
+# `dist`.
 [package.metadata.deb]
 assets = [
     ["target/*/dist/cratecv", "usr/bin/", "755"],
