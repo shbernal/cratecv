@@ -12,8 +12,8 @@
 
 #let theme = (
   paper: opt("paper", "a4"),
-  margin-x: num("marginX", 14) * 1mm,
-  margin-y: num("marginY", 12) * 1mm,
+  margin-x: num("marginX", 18) * 1pt,
+  margin-y: num("marginY", 24) * 1pt,
   size: num("size", 10.5) * 1pt,
   density: num("density", 1),
   accent: rgb(opt("accent", "#171717")),
@@ -28,10 +28,22 @@
 #let wash = rgb("#f5f5f5")
 #let hair = rgb("#e5e5e5")
 #let gap = theme.density * 1pt
+// Bullets are set a hair tight, about 1% narrower than the font's own
+// advances. That is the measure resumes written for a browser-printed page were
+// filled against, where each glyph's advance was rounded to a whole pixel.
+#let fit = num("fit", -0.008) * 1em
+
+// A line is `line` ems tall, with the glyphs centred in it: Noto Serif's
+// ascender and descender, less half of whatever the line leaves over.
+#let lines(line) = {
+  let over = (line - 1.362) / 2
+  (top-edge: (1.069 + over) * 1em, bottom-edge: -(0.293 + over) * 1em)
+}
 
 #set page(paper: theme.paper, margin: (x: theme.margin-x, y: theme.margin-y))
-#set text(font: "Noto Serif", size: theme.size, fill: ink, lang: "en")
-#set par(leading: 0.35em, justify: false, spacing: 0.35em)
+#set text(font: "Noto Serif", size: theme.size, fill: ink, lang: "en", ..lines(1.35))
+#set par(leading: 0pt, justify: false, spacing: 0pt)
+#set block(above: 0pt, below: 0pt)
 
 // Marks a block whose text is written to fill the width it is given, and
 // records the measure the layout engine actually broke it against. Everything
@@ -78,29 +90,32 @@
 }
 
 #align(center, {
-  block(below: 4pt, text(size: theme.size * 1.9, weight: "semibold", tracking: 0.02em, resume.name))
+  block(below: 3pt, text(size: theme.size * 1.905, weight: "semibold", tracking: 0.02em, resume.name))
   if "headline" in resume {
-    block(below: 4pt, text(size: theme.size, style: "italic", fill: quiet, resume.headline.text))
+    block(below: 3pt, text(size: theme.size, style: "italic", fill: quiet, resume.headline.text))
   }
   set text(size: small, fill: muted)
-  block(contact-items.join(box(inset: (x: 7pt), text(fill: rgb("#a3a3a3"), sym.bullet)))) 
+  block(below: 6pt, contact-items.join(box(
+    inset: (x: 12pt),
+    baseline: -0.3em,
+    circle(radius: 2.25pt, fill: rgb("#a3a3a3"), stroke: none),
+  )))
 })
 
 // ── sections ──────────────────────────────────────────────────────────────
 
 #let section-title(title) = block(
   width: 100%,
-  above: 7pt * theme.density,
-  below: 3pt,
-  stroke: (bottom: 0.5pt + ink),
-  inset: (bottom: 1.5pt),
+  below: 4.5pt * theme.density,
+  sticky: true,
+  stroke: (bottom: 0.75pt + ink),
   text(size: theme.size * 1.048, weight: 800, tracking: 0.06em, upper(title)),
 )
 
 #let bullets(path, details) = {
-  set text(size: small)
+  set text(size: small, tracking: fit)
   grid(
-    columns: (10pt, 1fr),
+    columns: (12pt, 1fr),
     row-gutter: 3pt * theme.density,
     ..details
       .enumerate()
@@ -115,8 +130,8 @@
   )
 }
 
-#let entry(path, item) = block(breakable: false, inset: (y: 2pt * theme.density), grid(
-  columns: (68pt, 1fr),
+#let entry(path, item) = block(breakable: false, inset: (y: 3pt * theme.density), grid(
+  columns: (67.5pt, 1fr),
   column-gutter: 18pt,
   text(size: small, fill: muted, item.dates),
   {
@@ -138,18 +153,18 @@
       )
     }
     if "role" in item {
-      block(above: 2pt, below: 0pt, text(size: tiny, style: "italic", fill: quiet, item.role))
+      block(text(size: tiny, style: "italic", fill: quiet, item.role))
     }
     if "details" in item {
-      block(above: 3.5pt * theme.density, below: 0pt, bullets(path, item.details))
+      block(above: 3pt * theme.density, bullets(path, item.details))
     }
   },
 ))
 
 #let skill-rows(path, skills) = {
-  set text(size: small)
+  set text(size: small, ..lines(1))
   grid(
-    columns: (116pt, 1fr),
+    columns: (116.25pt, 1fr),
     column-gutter: 6pt,
     row-gutter: 3pt * theme.density,
     align: horizon,
@@ -160,14 +175,15 @@
           width: 100%,
           fill: wash,
           radius: 2pt,
-          inset: (x: 6pt, y: 2.5pt),
+          inset: (x: 6pt, y: 1.5pt),
           text(weight: "semibold", skill.label),
         ),
         block(
           width: 100%,
-          stroke: 0.5pt + hair,
+          stroke: 0.75pt + hair,
           radius: 2pt,
-          inset: (x: 6pt, y: 2.5pt),
+          // The border sits inside the box, as a browser draws one.
+          inset: (x: 6pt, y: 2.25pt),
           measured(path + ".skills[" + str(index) + "]", skill.value),
         ),
       ))
@@ -179,25 +195,26 @@
 // measure to fall short of, and a fill ratio for one would be a number with
 // nothing behind it.
 #let skill-badges(skills) = {
-  set text(size: small)
+  set text(size: small, ..lines(1))
+  set par(leading: 3pt)
   block(width: 100%, skills
-    .map(skill => box(radius: 2pt, clip: true, stroke: 0.5pt + hair, {
-      box(fill: wash, inset: (x: 6pt, y: 2.5pt), text(weight: "semibold", skill.label))
-      box(inset: (x: 6pt, y: 2.5pt), skill.value)
+    .map(skill => box(radius: 2pt, clip: true, stroke: 0.75pt + hair, inset: 0.75pt, {
+      box(fill: wash, inset: (x: 6pt, y: 1.5pt), text(weight: "semibold", skill.label))
+      box(inset: (x: 6pt, y: 1.5pt), skill.value)
     }))
-    .join([ ]))
+    .join(h(6pt)))
 }
 
 #for (index, section) in resume.sections.enumerate() {
   let path = "sections[" + str(index) + "]"
+  if index > 0 { v(3pt * theme.density) }
   section-title(section.title)
-  if "entries" in section {
-    for (n, item) in section.entries.enumerate() {
-      entry(path + ".entries[" + str(n) + "]", item)
-    }
+  let blocks = if "entries" in section {
+    section.entries.enumerate().map(((n, item)) => entry(path + ".entries[" + str(n) + "]", item))
   } else if section.at("layout", default: "rows") == "badges" {
-    block(inset: (y: 2pt * theme.density), skill-badges(section.skills))
+    (block(inset: (y: 3pt * theme.density), skill-badges(section.skills)),)
   } else {
-    block(inset: (y: 2pt * theme.density), skill-rows(path, section.skills))
+    (block(inset: (y: 3pt * theme.density), skill-rows(path, section.skills)),)
   }
+  blocks.join(v(4.5pt * theme.density))
 }

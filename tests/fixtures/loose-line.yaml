@@ -6,4 +6,4 @@ sections:
     entries:
       - dates: 2020
         details:
-          - text: Owned the release pipeline and every one of our reproducibilityverificationinfrastructureharness runs, which went out nightly and woke up nobody at all for two whole quarters.
+          - text: Owned the release pipeline and every one of our nightly reproducibilityverificationinfrastructureharness runs, which went out every night and woke up nobody at all for two whole quarters.

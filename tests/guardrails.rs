@@ -40,7 +40,7 @@ fn a_block_that_never_wrapped_is_a_short_line() {
     assert_eq!(found.kind, LooseKind::ShortLine);
     assert_eq!(found.path, "sections[0].entries[0].details[0]");
     assert_eq!(found.line, 9);
-    assert!((0.27..0.30).contains(&found.fill), "fill {}", found.fill);
+    assert!((0.24..0.27).contains(&found.fill), "fill {}", found.fill);
     assert!(found.room_words.unwrap() > 5);
 }
 
@@ -79,7 +79,7 @@ fn running_over_the_page_says_by_how_far() {
     assert!(!report.ok);
     assert_eq!(report.pages, 2);
     let over = report.overflow_mm.expect("it ran over");
-    assert!((30.0..36.0).contains(&over), "over by {over}mm");
+    assert!((36.0..40.0).contains(&over), "over by {over}mm");
 }
 
 #[test]

@@ -6,4 +6,4 @@ sections:
     entries:
       - dates: 2020
         details:
-          - text: Rewrote the ingestion pipeline so that the nightly batch finished well before breakfast, overnight.
+          - text: Rewrote the ingestion pipeline so that the nightly batch always finished well before the first standup, overnight.
