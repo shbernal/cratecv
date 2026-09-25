@@ -42,11 +42,14 @@ pub struct Contact {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schemars(length(min = 1))]
     pub email: Option<String>,
+    /// The GitHub username alone, which links to `github.com/<username>`.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(length(min = 1))]
+    #[schemars(length(min = 1), regex(pattern = r"^[^/\s]+$"))]
     pub github: Option<String>,
+    /// The LinkedIn profile handle alone, which links to
+    /// `linkedin.com/in/<handle>`.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[schemars(length(min = 1))]
+    #[schemars(length(min = 1), regex(pattern = r"^[^/\s]+$"))]
     pub linkedin: Option<String>,
 }
 

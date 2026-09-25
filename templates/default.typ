@@ -64,13 +64,13 @@
   if "email" in c { out.push(link("mailto:" + c.email, c.email)) }
   if "github" in c {
     out.push(link(
-      "https://" + c.github,
+      "https://github.com/" + c.github,
       box(icon("/icons/github.svg", "GitHub")) + h(3pt) + c.github,
     ))
   }
   if "linkedin" in c {
     out.push(link(
-      "https://" + c.linkedin,
+      "https://www.linkedin.com/in/" + c.linkedin,
       box(icon("/icons/linkedin.svg", "LinkedIn")) + h(3pt) + c.linkedin,
     ))
   }

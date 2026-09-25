@@ -232,3 +232,20 @@ sections:
         found.message
     );
 }
+
+#[test]
+fn a_profile_link_takes_the_handle_not_the_url() {
+    let found = only(
+        "\
+name: Ada
+contact:
+  github: github.com/ada
+sections:
+  - title: Experience
+    entries:
+      - dates: 2020
+",
+    );
+    assert_eq!(found.path, "contact.github");
+    assert!(found.message.contains("`ada`"), "{}", found.message);
+}

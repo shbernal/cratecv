@@ -37,6 +37,8 @@ assistant can validate a resume before the tool runs.
 | `cratecv` | no | settings for this tool, never rendered |
 
 `contact` takes `phone`, `email`, `github` and `linkedin`, each optional.
+`github` and `linkedin` take the handle alone, `mhalvorsen` rather than
+`github.com/mhalvorsen`: the theme shows the handle and builds the link.
 
 ## Sections
 

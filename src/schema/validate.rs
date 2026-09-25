@@ -52,6 +52,22 @@ fn contact_rules(found: &mut Findings, at: &Path, contact: &Contact) {
             found.text(&at.key(key), value);
         }
     }
+    // The theme builds the link, so a URL here would link to a URL.
+    for (key, value) in [("github", &contact.github), ("linkedin", &contact.linkedin)] {
+        if let Some(value) = value
+            && value.contains(|c: char| c == '/' || c.is_whitespace())
+        {
+            let handle = value
+                .trim_end_matches('/')
+                .rsplit('/')
+                .next()
+                .unwrap_or(value);
+            found.push(
+                &at.key(key),
+                format!("give the handle alone, `{handle}`, not a URL or a path"),
+            );
+        }
+    }
 }
 
 fn section_rules(found: &mut Findings, at: &Path, section: &Section) {

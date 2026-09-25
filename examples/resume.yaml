@@ -7,8 +7,8 @@ headline:
 contact:
   phone: "+1 555 0142"
   email: mira@halvorsen.example
-  github: github.com/mhalvorsen
-  linkedin: linkedin.com/in/mhalvorsen
+  github: mhalvorsen
+  linkedin: mhalvorsen
 
 sections:
   - title: Experience
