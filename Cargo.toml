@@ -21,12 +21,12 @@ path = "src/main.rs"
 [dependencies]
 clap = { version = "4.6.7", features = ["derive"] }
 comemo = "0.5"
-lopdf = { version = "0.45", default-features = false }
+lopdf = { version = "0.47", default-features = false }
 marked-yaml = { version = "0.8.0", features = ["serde", "serde-path"] }
-notify = "8.2.0"
+notify = "8.2.2"
 schemars = "1"
 serde = { version = "1.0.229", features = ["derive"] }
-serde_json = "1.0.151"
+serde_json = "1.0.154"
 typst = "=0.15.1"
 typst-layout = "=0.15.1"
 typst-library = "=0.15.1"
@@ -53,6 +53,6 @@ lto = true
 strip = true
 
 [dev-dependencies]
-jsonschema = "0.57"
+jsonschema = "0.61"
 marked-yaml = "0.8.0"
 sha2 = "0.11.0"
