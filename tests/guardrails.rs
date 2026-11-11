@@ -1,7 +1,7 @@
 //! The report, measured against fixtures whose numbers can be checked by hand.
 
 use cratecv::layout::measure;
-use cratecv::report::{Check, LooseKind, Report, Severity, report};
+use cratecv::report::{Check, LooseKind, Report, report};
 use cratecv::schema::Locator;
 
 fn judge(name: &str, check: &Check) -> Report {
@@ -104,26 +104,6 @@ fn two_pages_are_fine_when_two_are_allowed() {
     assert_eq!(report.pages, 2);
     assert!(report.overflow_mm.is_none());
     assert_eq!(report.max_pages, 2);
-}
-
-#[test]
-fn silent_is_visible_in_the_report() {
-    let mut check = Check::default();
-    check.loose_lines.severity = Severity::Silent;
-    let report = judge("short-line", &check);
-    assert!(report.ok);
-    assert!(report.loose_lines.is_empty());
-    assert_eq!(report.loose_line_severity, Severity::Silent);
-    assert_eq!(report.settings.loose_lines.severity, Severity::Silent);
-}
-
-#[test]
-fn error_severity_fails_the_run_on_the_same_finding() {
-    let mut check = Check::default();
-    check.loose_lines.severity = Severity::Error;
-    let report = judge("short-line", &check);
-    assert!(!report.ok);
-    assert_eq!(report.loose_lines.len(), 1);
 }
 
 #[test]

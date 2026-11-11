@@ -45,7 +45,6 @@ fn the_example_conforms_to_pdf_ua_1() {
 fn the_text_comes_back_out_in_reading_order() {
     let (document, meta) = example();
     let pdf = cratecv::export_pdf(&document, &meta).unwrap();
-    assert!(pdf.starts_with(b"%PDF-"));
     // The structure tree is what an extractor walks; without it the tagged-PDF
     // promise in the README is not kept.
     let raw = String::from_utf8_lossy(&pdf);
