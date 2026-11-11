@@ -1,6 +1,6 @@
 [package]
 name = "cratecv"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2024"
 rust-version = "1.98"
 description = "Compile a YAML resume to a one-page PDF, with layout guardrails machines can read."
