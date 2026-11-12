@@ -45,7 +45,7 @@ cratecv check cv.yaml --json | jq '.looseLines[] | {path, fill}'
 
 `preview` renders the page as PNG, or as SVG when the output path ends in
 `.svg`. It is the real output rather than an approximation of it, which is what
-`watch` plus an image viewer makes into a development loop — there is no dev
+`watch` plus an image viewer makes into a development loop; there is no dev
 server here and no need for one.
 
 `watch` recompiles on every save, debounced, and writes even when the page count

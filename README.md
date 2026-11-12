@@ -47,10 +47,10 @@ cratecv schema                      # JSON Schema for the resume format
 ## Docs
 
 - [The resume format](docs/resume-schema.md)
-- [Guardrails](docs/guardrails.md) — the four kinds of half-empty line, and what
+- [Guardrails](docs/guardrails.md): the four kinds of half-empty line, and what
   `ok` does and does not mean
-- [The command line](docs/cli.md) — commands and exit codes
-- [Configuration](docs/configuration.md) — the four layers
+- [The command line](docs/cli.md): commands and exit codes
+- [Configuration](docs/configuration.md): the four layers
 - [Architecture](docs/architecture.md), and the
   [decision records](docs/technical/adr/)
 

@@ -34,6 +34,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo fmt --check
       - run: cargo clippy --all-targets -- -D warnings
+      # No em dash in the Markdown docs. Rules in charcheck.config.json.
+      - run: npx -y charcheck@0.4.1
 
   line-endings:
     name: line endings

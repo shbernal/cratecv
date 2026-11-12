@@ -41,7 +41,7 @@ positions, which the introspector's `position()` does not give.
 Only bullets and skill rows are marked. Dates, roles, organizations and headings
 are short because they are short, so they are never measured and need no
 exemption rule: an unmarked block is simply absent from the walk. Badges are
-unmarked for the same reason — a badge is a box sized to its own text.
+unmarked for the same reason: a badge is a box sized to its own text.
 
 ## Consequences
 
@@ -50,7 +50,7 @@ engine actually used rather than one reconstructed from the outside.
 
 It depends on a Typst internal: the `Content` inside `Tag::Start`, and
 `MetadataElem` being reachable from it. That is why the typst family is pinned
-exactly. `tests/markers.rs` is the entire insurance policy — there is no
+exactly. `tests/markers.rs` is the entire insurance policy; there is no
 fallback path in the code, and if that test fails, nothing can be attributed.
 
 A theme that forgets to mark a block does not report a wrong number; it reports

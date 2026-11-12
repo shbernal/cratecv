@@ -14,7 +14,7 @@ contact:
 sections:
   - title: Experience
     entries:
-      - dates: 2022 — present
+      - dates: 2022 – present
         organization: Tessellate
         role: Staff Engineer
         details:

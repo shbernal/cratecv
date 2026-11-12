@@ -29,8 +29,8 @@ resume.yaml ─► parse + validate ─► Resume ─► canonical JSON ─► T
   ([ADR 0004](technical/adr/0004-guardrails-read-the-frame-tree.md)).
 - **`report/`** judges the measurements against the resolved settings and
   produces the JSON contract.
-- **`config/`** folds four layers — defaults, config file, the resume's own
-  block, flags — into the settings the report echoes.
+- **`config/`** folds four layers (defaults, config file, the resume's own
+  block, flags) into the settings the report echoes.
 - **`pdf/`** writes the origin metadata Typst does not expose, after export and
   after the guardrails pass
   ([ADR 0006](technical/adr/0006-producer-is-written-after-export.md)).
@@ -48,7 +48,7 @@ is pinned exactly rather than by caret.
 
 ## Why the library holds everything
 
-`src/lib.rs` exposes every operation the CLI performs — loading, compiling,
+`src/lib.rs` exposes every operation the CLI performs: loading, compiling,
 measuring, reporting, exporting. `src/main.rs` only parses arguments, touches
 files and decides what to print. The checks are therefore testable without
 spawning a subprocess, and the tool is usable as a crate.

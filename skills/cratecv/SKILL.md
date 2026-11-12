@@ -27,7 +27,7 @@ Do not guess field names from this file.
 four warnings is `ok: true` with a non-empty `looseLines`. Ask `ok` whether the
 run succeeded; ask `looseLines` whether there is anything to fix.
 
-Every finding carries `path` — `sections[1].entries[0].details[2]` — which is
+Every finding carries `path` (`sections[1].entries[0].details[2]`), which is
 the exact bullet to edit, and `line`, which is where it sits in the file.
 
 `looseLineSeverity: "silent"` with an empty `looseLines` means the check was
@@ -44,8 +44,8 @@ problem.
 | --- | --- | --- |
 | `widow` | The last line holds one word alone | Cut one or two words earlier in the bullet so it pulls up |
 | `shortLastLine` | The last line barely starts | Add a clause worth reading, or cut enough to lose the line |
-| `looseLine` | A line stopped early because the next word did not fit | `bumped` names that word — shorten it or move it |
-| `shortLine` | A bullet that never wrapped and has room | `roomWords` says roughly how many more words fit — say something concrete |
+| `looseLine` | A line stopped early because the next word did not fit | `bumped` names that word; shorten it or move it |
+| `shortLine` | A bullet that never wrapped and has room | `roomWords` says roughly how many more words fit; say something concrete |
 
 `wastedLines` is the total space the findings add up to, in whole lines. It
 answers a question you cannot answer from the findings one at a time: whether
@@ -59,7 +59,7 @@ page. A bullet line is about 4.5mm.
 you are cutting a sentence or a whole entry.
 
 Cut the weakest bullet. Do not reach for a smaller font or narrower margins:
-they are not configurable, on purpose — every number in the report is measured
+they are not configurable, on purpose: every number in the report is measured
 against a fixed page, and a report whose numbers move with the settings cannot
 be compared between runs.
 
@@ -86,5 +86,5 @@ cratecv:
 - Do not edit the PDF. It is a build artifact.
 - Do not tune thresholds to make warnings disappear. `severity: silent` is the
   honest way to switch the check off, and it shows up in the report.
-- Do not restate this tool's JSON contract from memory — read `cratecv schema`
+- Do not restate this tool's JSON contract from memory; read `cratecv schema`
   and the report itself.
