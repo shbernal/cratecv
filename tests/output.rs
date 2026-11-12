@@ -5,13 +5,16 @@
 use cratecv::config::{Config, Flags, PdfMeta, resolve};
 use typst_layout::PagedDocument;
 
-/// The example, with the metadata a machine with no config file would resolve
-/// and no date, so the bytes depend only on this repository.
+/// The example, with the metadata a machine with no config file would resolve,
+/// no date, and a creator and producer without the crate version, so the bytes
+/// depend only on this repository and a release bump leaves them alone.
 fn example() -> (PagedDocument, PdfMeta) {
     let resume =
         cratecv::load(include_str!("../examples/resume.yaml")).expect("the example should load");
-    let settings =
+    let mut settings =
         resolve(&Config::default(), None, &Flags::default()).expect("the defaults resolve");
+    settings.pdf.creator = "cratecv".to_owned();
+    settings.pdf.producer = "cratecv".to_owned();
     let mut document = cratecv::compile(&resume).expect("the example should compile");
     cratecv::describe(&mut document, &resume, &settings.pdf, None);
     (document, settings.pdf)
