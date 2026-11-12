@@ -7,7 +7,7 @@ Status: accepted
 The checks need two things a PDF gives up reluctantly: where every line sits,
 and how wide it is against the measure it was broken against.
 
-Reading the exported PDF is possible — the predecessor did exactly that,
+Reading the exported PDF is possible: the predecessor did exactly that,
 counting `/Type /Page` and reconstructing text positions from content streams.
 It works, and it is forensics. Glyph advances have to be reassembled from font
 metrics, a run's logical extent has to be inferred from where the ink landed,

@@ -29,5 +29,5 @@ moment margins vary per machine, the report's numbers become incomparable with
 nothing in the output explaining why.
 
 If this is reopened, it has to come with a plan for keeping the report
-self-describing — most likely echoing the resolved typography beside the
+self-describing, most likely echoing the resolved typography beside the
 resolved check settings, the way the check settings are echoed today.

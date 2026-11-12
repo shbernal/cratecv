@@ -2,14 +2,14 @@
 
 Two checks run against the laid-out page: whether it fits, and whether its lines
 fill the width they were given. Both are measurements taken from Typst's frame
-tree rather than inferences from the PDF — see
+tree rather than inferences from the PDF; see
 [ADR 0004](technical/adr/0004-guardrails-read-the-frame-tree.md).
 
 ## One page
 
 `maxPages` defaults to 1. When the content runs over, `overflowMm` says how far
-past the last allowed page it reaches — computed from the position of the last
-run, not estimated — so the message can say "over by 23mm" rather than "over by
+past the last allowed page it reaches (computed from the position of the last
+run, not estimated), so the message can say "over by 23mm" rather than "over by
 a page". When it fits, `remainingMm` says how much of the last page is left
 below the last line's baseline, down to the bottom margin the theme marks.
 
@@ -22,7 +22,7 @@ otherwise.
 
 Only text written to fill its width is measured: bullets, and skill values in
 the `rows` layout. A date, a role or a heading is short because it is short.
-Badges are not measured either — a badge is a box sized to its own text.
+Badges are not measured either: a badge is a box sized to its own text.
 
 Four kinds, each with its own threshold:
 
@@ -40,8 +40,8 @@ carries `roomWords`, roughly how many more words of the same length would fit.
 whole lines. It is what tells you whether there is room for another bullet.
 
 These four numbers were tuned against real resumes, and they are the only
-numbers here with provenance. They are settings, not constants — see
-[configuration](configuration.md) — but moving one changes what the report
+numbers here with provenance. They are settings, not constants (see
+[configuration](configuration.md)), but moving one changes what the report
 means, so change it deliberately.
 
 ### The only fix is rewriting

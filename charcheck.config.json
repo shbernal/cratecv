@@ -1,0 +1,5 @@
+{
+  "rules": [
+    { "id": "no-em-dash", "chars": ["—"], "include": ["**/*.md"] }
+  ]
+}

@@ -20,14 +20,14 @@ Exit codes track severity, not which check spoke:
 
 - `0` compiled, within `maxPages`, nothing at `error` severity. Loose lines at
   the default `warn` land here: reported, not fatal.
-- `1` a check failed — over `maxPages`, or loose lines when their severity is
+- `1` a check failed: over `maxPages`, or loose lines when their severity is
   `error`.
 - `2` the resume is invalid, or the arguments are.
 - `3` a bug in this tool: a template or compiler failure, or a frame-walk
   assertion.
 
 `looseLines.severity` is the only supported way to silence that check, so
-silencing never has to be faked by widening a threshold until nothing trips —
+silencing never has to be faked by widening a threshold until nothing trips,
 which would read back as a real measurement.
 
 `maxPages` has no severity. It *is* the knob: a second way to express the same

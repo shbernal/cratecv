@@ -34,6 +34,12 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo fmt --check
       - run: cargo clippy --all-targets -- -D warnings
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # No em dash in the tracked Markdown (not target/, which holds
+      # dependencies' READMEs). Rules in charcheck.config.json.
+      - run: git ls-files -z '*.md' | xargs -0 npx -y charcheck@0.4.1
 
   line-endings:
     name: line endings

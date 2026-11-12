@@ -14,7 +14,7 @@ date, which `typst-pdf` writes into both the Info dictionary and the XMP packet.
 `xmp:CreatorTool`.
 
 It does not cover Producer. `PdfOptions` has no field for it, and as of 0.15.1
-the writer emits no Producer at all — neither in the Info dictionary nor in XMP.
+the writer emits no Producer at all, neither in the Info dictionary nor in XMP.
 A document with a Creator and no Producer is itself a signature.
 
 ## Decision

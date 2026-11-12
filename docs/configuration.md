@@ -3,9 +3,9 @@
 Settings are stated at four levels, most specific winning:
 
 1. Built-in defaults, compiled in.
-2. `~/.config/cratecv/config.yaml` — every resume on this machine.
-3. A `cratecv:` block in a resume — that one document, everywhere.
-4. Command-line flags — this invocation.
+2. `~/.config/cratecv/config.yaml`: every resume on this machine.
+3. A `cratecv:` block in a resume: that one document, everywhere.
+4. Command-line flags: this invocation.
 
 Both files are YAML and both go through the same strict loader, so a typo'd key
 in the config gets the same diagnostic, at the same line and column, as a typo'd
@@ -57,7 +57,7 @@ cratecv:
 
 ### Values that dodge YAML
 
-`severity: silent`, not `off` — `off` is a boolean in YAML and would either
+`severity: silent`, not `off`: `off` is a boolean in YAML and would either
 become `false` or fail confusingly. A fixed `date` is quoted for the same
 reason: unquoted, it is a YAML date rather than a string.
 
@@ -74,7 +74,7 @@ the title reads `<name> - Resume`.
 ## Severity, and what the exit code means
 
 `looseLines.severity` is the only supported way to switch that check off, so
-silencing never has to be faked by widening a threshold until nothing trips —
+silencing never has to be faked by widening a threshold until nothing trips,
 which would read back as a real measurement. `maxPages` has no severity: it is
 the knob, and the report echoes both.
 
