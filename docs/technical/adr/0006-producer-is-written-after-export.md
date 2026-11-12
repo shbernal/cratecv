@@ -42,5 +42,6 @@ it does not disguise it.
 builds of one resume are byte-identical. That property is asserted in the tests,
 because it is the kind of thing that breaks silently.
 
-If a later Typst release exposes Producer, the pass can go and this record is
-the reason to check.
+Typst leaves Producer unset on purpose
+([typst/typst#8852](https://github.com/typst/typst/issues/8852)), so the pass
+is permanent rather than a stopgap.

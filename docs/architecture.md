@@ -44,7 +44,10 @@ never read back.
 width. That is exact line-box data, so page fitting and line fill are
 measurements rather than reconstructions of what a PDF writer did. It costs a
 hard dependency on Typst's internal layout types, which is why the typst family
-is pinned exactly rather than by caret.
+is pinned exactly rather than by caret. An exact pin never fails a build, so it
+falls behind without anyone noticing: check for a new Typst minor deliberately.
+An upgrade touches three places: the `World` impl, the frame-tree walk and the
+`Tag` payload read.
 
 ## Why the library holds everything
 
