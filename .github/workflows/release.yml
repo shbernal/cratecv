@@ -44,12 +44,14 @@ jobs:
           - target: x86_64-pc-windows-msvc
             os: windows-latest
           # Native Linux runners rather than cross, so the .deb architecture is
-          # real and no emulation is involved.
+          # real and no emulation is involved. A binary needs the glibc of the
+          # image that built it or newer, so both are pinned to an old image
+          # rather than ubuntu-latest, whose glibc floor moves on its own.
           - target: x86_64-unknown-linux-gnu
-            os: ubuntu-latest
+            os: ubuntu-22.04
             deb: true
           - target: aarch64-unknown-linux-gnu
-            os: ubuntu-24.04-arm
+            os: ubuntu-22.04-arm
             deb: true
     steps:
       - uses: actions/checkout@v7
